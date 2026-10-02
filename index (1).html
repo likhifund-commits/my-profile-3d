@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Likhith Noel Roy | Graphic Design, Video Editing & 3D Animation</title>
+<meta name="description" content="Portfolio of Likhith Noel Roy, a Bengaluru-based creator working in graphic design, video editing and 3D animation with Blender.">
+<meta property="og:title" content="Likhith Noel Roy | Interactive Portfolio">
+<meta property="og:description" content="Graphic design, video editing and 3D animation, presented as a Minecraft-style world.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--grass:#5c8e32;--stone:#737373;--stone-d:#4a4a4a;--day:#78a7ff;--night:#0b112c;--red:#ff2a2a;--gold:#fca800;--diamond:#4bede6;--ui:rgba(30,30,30,.88);--px:'Press Start 2P',monospace;--sub:'VT323',monospace;--main:'Outfit',sans-serif;--bg:var(--day)}
+body.night{--bg:var(--night)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;font-family:var(--main);overflow-x:hidden;transition:background-color 1s ease}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--diamond);outline-offset:3px}
+.btn,.mc-box,.tool-slot,.skill-head{user-select:none}
+.scanlines{position:fixed;inset:0;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.15) 50%);background-size:100% 4px;z-index:999;pointer-events:none;opacity:.5}
+#world{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.mc-box{background:var(--ui);border:4px solid #000;outline:4px solid #555;box-shadow:inset -4px -4px 0 #111,inset 4px 4px 0 #666,8px 8px 0 rgba(0,0,0,.5);padding:24px;margin-bottom:30px}
+.mc-title{font-family:var(--px);font-size:1.3rem;color:var(--gold);text-shadow:2px 2px #000;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.mc-title::before{content:'';width:16px;height:16px;flex:none;background:var(--red);box-shadow:inset -2px -2px 0 #800,inset 2px 2px 0 #f88}
+.lead{font-family:var(--sub);font-size:1.3rem;color:#bbb;margin-bottom:20px}
+.btn{font-family:var(--px);font-size:.85rem;background:#727272;border:3px solid #000;box-shadow:inset -3px -3px 0 #373737,inset 3px 3px 0 #aaa;padding:12px 20px;cursor:pointer;text-shadow:2px 2px #000;text-decoration:none;display:inline-block}
+.btn:hover{background:#8b8b8b;color:#ffffa0}
+.btn:active{box-shadow:inset 3px 3px 0 #373737,inset -3px -3px 0 #aaa;transform:translate(2px,2px)}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+section{padding:40px 0}
+.js section{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.js section.visible{opacity:1;transform:none}
+.toggle-bar{position:fixed;top:16px;right:16px;z-index:1000}
+.media{position:relative;background:#0d0d0d;border:1px dashed #555;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--sub);font-size:1.2rem;color:#777;overflow:hidden}
+.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* hero */
+#hero{position:fixed;inset:0;background:rgba(10,15,30,.94);z-index:2000;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px;transition:opacity 1s,visibility 1s}
+#hero.done{opacity:0;visibility:hidden;pointer-events:none}
+.hero-title{font-family:var(--px);font-size:clamp(1.2rem,6vw,2.8rem);text-shadow:4px 4px #000,0 0 20px var(--gold);margin-bottom:10px;line-height:1.3}
+.hero-sub{font-family:var(--sub);font-size:clamp(1.1rem,3.5vw,1.8rem);color:var(--diamond);letter-spacing:2px;margin-bottom:36px;text-shadow:2px 2px #000}
+.loading{width:min(320px,80vw);background:#000;border:3px solid #555;padding:4px;margin:15px 0}
+.bar{width:0;height:20px;background:var(--grass);box-shadow:inset 0 2px 0 #88e040;transition:width .3s}
+.load-text{font-family:var(--px);font-size:.7rem;color:#aaa}
+#spawn{display:none;flex-direction:column;align-items:center}
+.skip{margin-top:18px;font-family:var(--sub);font-size:1.2rem;background:none;border:0;color:#999;cursor:pointer;text-decoration:underline}
+/* profile */
+.profile{display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:start}
+.avatar{aspect-ratio:1;border:4px solid var(--stone)}
+.stat{display:flex;gap:12px;margin-bottom:12px;font-family:var(--sub);font-size:1.4rem;border-bottom:1px dashed #444;padding-bottom:6px}
+.stat dt{color:var(--gold);width:130px;flex:none}
+.stat dd{flex:1}
+.bio{font-size:1.05rem;line-height:1.5;color:#ddd;font-family:var(--main)}
+/* tools */
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px}
+.tool-slot{aspect-ratio:1;background:#2a2a2a;border:3px solid #111;box-shadow:inset 3px 3px 0 #181818,inset -3px -3px 0 #444;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;transition:transform .2s,border-color .2s}
+.tool-slot:hover,.tool-slot:focus-within{transform:scale(1.05);border-color:var(--gold)}
+.tool-slot span{font-size:2rem}
+.tool-slot b{font-family:var(--px);font-size:.6rem;font-weight:400;margin-top:8px;color:#ddd;text-align:center}
+.tip{position:absolute;bottom:105%;left:50%;transform:translateX(-50%);background:#100010;border:2px solid #2b005c;padding:8px 12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;z-index:5}
+.tool-slot:hover .tip,.tool-slot:focus .tip{opacity:1}
+.tip i{display:block;font-style:normal;font-family:var(--px);font-size:.65rem;color:#c0c}
+.tip em{font-style:normal;font-family:var(--sub);font-size:1.1rem;color:#5ff}
+/* skills */
+.skill{border:2px solid var(--stone);background:rgba(0,0,0,.5);margin-bottom:16px}
+.skill.open{border-color:var(--diamond);background:rgba(20,50,60,.7)}
+.skill-head{width:100%;display:flex;justify-content:space-between;gap:12px;align-items:center;background:none;border:0;padding:16px;cursor:pointer;text-align:left;font-family:var(--px);font-size:.8rem;color:var(--gold)}
+.skill-head small{font:inherit;font-size:.6rem;color:var(--diamond)}
+.skill-body{display:none;padding:0 16px 16px;color:#ccc}
+.skill.open .skill-body{display:block}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:#181818;border:3px solid #333;padding:16px;transition:border-color .2s,transform .2s}
+.card:hover{transform:translateY(-4px)}
+.game:hover{border-color:var(--red)}
+.sport:hover{border-color:var(--diamond)}
+.tag{font-family:var(--px);font-size:.55rem;background:var(--stone-d);padding:4px 8px;display:inline-block;margin-bottom:10px;color:#bbb}
+.sport .tag{color:var(--diamond)}
+.card h3{font-family:var(--px);font-size:.85rem;font-weight:400;margin-bottom:8px}
+.card p{font-family:var(--sub);font-size:1.15rem;color:#aaa}
+.card .media{height:100px}
+/* gallery */
+.work{padding:0;background:#181818;border:3px solid #333;cursor:pointer;text-align:left;display:block;width:100%}
+.work:hover{border-color:var(--gold)}
+.work .media{aspect-ratio:16/10;border:0;border-bottom:3px solid #333}
+.work span{display:block;padding:12px;font-family:var(--px);font-size:.65rem;line-height:1.5}
+/* dev + build */
+.dev{border-color:var(--red);background:rgba(20,5,5,.92);position:relative}
+.hud{position:absolute;top:10px;right:12px;font-family:var(--px);font-size:.55rem;color:var(--red);animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.video{aspect-ratio:16/9;border:4px solid var(--stone)}
+.video video{object-fit:contain}
+/* quests */
+.quest{background:rgba(0,0,0,.4);border-left:4px solid var(--gold);padding:12px 16px;margin-bottom:12px}
+.quest small{display:block;font-family:var(--px);font-size:.6rem;color:var(--gold);margin-bottom:6px}
+.quest h3{font-family:var(--px);font-size:.85rem;font-weight:400;line-height:1.5}
+.quest p{font-family:var(--sub);font-size:1.2rem;color:#aaa}
+.links{display:flex;flex-wrap:wrap;gap:15px;justify-content:center}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:3000;display:none;flex-direction:column;padding:30px;overflow-y:auto}
+.modal.open{display:flex}
+.modal-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.modal-inner{max-width:900px;margin:0 auto;width:100%}
+.modal .media{min-height:200px}
+#lightbox .media{aspect-ratio:16/10;width:100%;max-width:1000px;margin:0 auto}
+#lightbox .media img{object-fit:contain}
+/* enderman */
+#enderman{position:fixed;bottom:0;right:24px;width:44px;height:132px;background:none;border:0;padding:0;cursor:pointer;z-index:50;transition:left .15s,right .15s}
+#enderman svg{width:100%;height:100%;display:block;shape-rendering:crispEdges}
+#enderman.tp{animation:flick .3s steps(3)}
+@keyframes flick{50%{opacity:0}}
+.ender-p{position:fixed;width:8px;height:8px;background:#b34bff;box-shadow:0 0 6px #d58bff;z-index:60;pointer-events:none}
+.hero-ender{width:44px;height:132px;margin-bottom:8px;transition:transform .25s;pointer-events:none}
+.hero-ender svg{width:100%;height:100%;display:block;shape-rendering:crispEdges}
+.hero-ender.tp{animation:flick .3s steps(3)}
+@media(max-width:768px){#enderman{width:30px;height:90px}}
+@media(max-width:768px){.profile{grid-template-columns:1fr}.mc-title{font-size:1rem}.avatar{max-width:220px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.js section{opacity:1;transform:none}}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+<noscript><style>.js section{opacity:1!important;transform:none!important}#hero{display:none}</style></noscript>
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="toggle-bar"><button class="btn" id="theme" aria-pressed="false">☀ DAY</button></div>
+
+<div id="hero" role="dialog" aria-label="Welcome">
+  <div class="hero-ender" id="hero-ender" aria-hidden="true">
+    <svg viewBox="0 0 11 33"><rect x="3" y="0" width="5" height="5" fill="#141414"/><rect x="3" y="3" width="2" height="1" fill="#e6a8ff"/><rect x="6" y="3" width="2" height="1" fill="#e6a8ff"/><rect x="3" y="5" width="5" height="8" fill="#1c1c1c"/><rect x="1" y="5" width="2" height="16" fill="#141414"/><rect x="8" y="5" width="2" height="16" fill="#141414"/><rect x="3" y="13" width="2" height="20" fill="#141414"/><rect x="6" y="13" width="2" height="20" fill="#141414"/></svg>
+  </div>
+  <div class="load-text" id="status">GENERATING TERRAIN...</div>
+  <div class="loading" id="loading"><div class="bar" id="bar"></div></div>
+  <div id="spawn">
+    <div class="load-text" style="color:var(--gold);margin-bottom:12px">WELCOME TO THE WORLD OF</div>
+    <h1 class="hero-title">LIKHITH NOEL ROY</h1>
+    <p class="hero-sub">GRAPHIC DESIGN • VIDEO EDITING • 3D ANIMATION</p>
+    <button class="btn" id="start" style="font-size:1.05rem;padding:16px 28px">[ START ADVENTURE ]</button>
+  </div>
+  <button class="skip" id="skip">Skip intro</button>
+</div>
+
+<main class="container">
+
+<section id="profile"><div class="mc-box">
+  <h2 class="mc-title">PLAYER PROFILE</h2>
+  <div class="profile">
+    <div class="media avatar">[ PLAYER AVATAR ]<img src="assets/images/profile.jpg" alt="Portrait of Likhith Noel Roy" onerror="this.remove()"></div>
+    <dl>
+      <div class="stat"><dt>NAME:</dt><dd>Likhith Noel Roy</dd></div>
+      <div class="stat"><dt>LOCATION:</dt><dd>Bengaluru, Karnataka, India</dd></div>
+      <div class="stat"><dt>STATUS:</dt><dd>College Student / Digital Creator</dd></div>
+      <div class="stat" style="border:0"><dt>BIO:</dt><dd class="bio">Passionate about creativity, whether it's graphic design, video editing, or 3D animation in Blender. Loves experimenting with visuals and storytelling, continuously learning, growing, and sharing work online.</dd></div>
+    </dl>
+  </div>
+</div></section>
+
+<section id="work"><div class="mc-box">
+  <h2 class="mc-title">PROJECT SHOWCASE</h2>
+  <p class="lead">Select a project to view it full size.</p>
+  <div class="grid" id="gallery">
+    <button class="work" data-title="Blender Render 1"><div class="media">[ PROJECT 1 ]<img src="assets/images/project-1.jpg" alt="Blender render 1" onerror="this.remove()"></div><span>BLENDER RENDER 1</span></button>
+    <button class="work" data-title="Blender Render 2"><div class="media">[ PROJECT 2 ]<img src="assets/images/project-2.jpg" alt="Blender render 2" onerror="this.remove()"></div><span>BLENDER RENDER 2</span></button>
+    <button class="work" data-title="Graphic Design 1"><div class="media">[ PROJECT 3 ]<img src="assets/images/project-3.jpg" alt="Graphic design piece 1" onerror="this.remove()"></div><span>GRAPHIC DESIGN 1</span></button>
+    <button class="work" data-title="Graphic Design 2"><div class="media">[ PROJECT 4 ]<img src="assets/images/project-4.jpg" alt="Graphic design piece 2" onerror="this.remove()"></div><span>GRAPHIC DESIGN 2</span></button>
+    <button class="work" data-title="Video Edit"><div class="media">[ PROJECT 5 ]<img src="assets/images/project-5.jpg" alt="Video edit still" onerror="this.remove()"></div><span>VIDEO EDIT</span></button>
+    <button class="work" data-title="Animation Still"><div class="media">[ PROJECT 6 ]<img src="assets/images/project-6.jpg" alt="Animation still" onerror="this.remove()"></div><span>ANIMATION STILL</span></button>
+  </div>
+</div></section>
+
+<section id="video"><div class="mc-box">
+  <h2 class="mc-title">FEATURED VIDEO</h2>
+  <p class="lead">Highlight reel / animation render:</p>
+  <div class="media video">[ FEATURED VIDEO PLACEHOLDER ]
+    <video controls preload="none"><source src="assets/videos/featured.mp4" type="video/mp4"></video>
+  </div>
+</div></section>
+
+<section id="tools"><div class="mc-box">
+  <h2 class="mc-title">CRAFTING TOOLS</h2>
+  <p class="lead">Essential software equipped in inventory:</p>
+  <div class="tools">
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">🧊</span><b>BLENDER</b><div class="tip"><i>BLENDER</i><em>3D Modeling &amp; Animation</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">🖌️</span><b>KRITA</b><div class="tip"><i>KRITA</i><em>Digital Painting</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">🎮</span><b>UNITY</b><div class="tip"><i>UNITY</i><em>Game Engine</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">⚙️</span><b>UNREAL ENGINE</b><div class="tip"><i>UNREAL ENGINE</i><em>Real-Time 3D &amp; Games</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">☁️</span><b>ADOBE CC</b><div class="tip"><i>ADOBE CREATIVE CLOUD</i><em>Design &amp; Video Apps</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">🖼️</span><b>PHOTOSHOP</b><div class="tip"><i>PHOTOSHOP</i><em>Editing &amp; Compositing</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">✒️</span><b>ILLUSTRATOR</b><div class="tip"><i>ILLUSTRATOR</i><em>Vector Graphics</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">🎞️</span><b>DAVINCI RESOLVE</b><div class="tip"><i>DAVINCI RESOLVE</i><em>Editing &amp; Color Grading</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">📐</span><b>FIGMA</b><div class="tip"><i>FIGMA</i><em>UI &amp; Layout Design</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">🗿</span><b>MAYA</b><div class="tip"><i>MAYA</i><em>3D Modeling &amp; Animation</em></div></div>
+    <div class="tool-slot" tabindex="0"><span aria-hidden="true">📊</span><b>MS OFFICE</b><div class="tip"><i>MS OFFICE</i><em>Word, Excel, PowerPoint</em></div></div>
+  </div>
+</div></section>
+
+<section id="skills"><div class="mc-box">
+  <h2 class="mc-title">SKILL TREE</h2>
+  <div class="skill"><button class="skill-head" aria-expanded="false"><span>[+] GRAPHIC DESIGN</span><small>UNLOCKED</small></button><div class="skill-body">Layout design, visual experimentation, and brand aesthetic creation.</div></div>
+  <div class="skill"><button class="skill-head" aria-expanded="false"><span>[+] VIDEO EDITING</span><small>UNLOCKED</small></button><div class="skill-body">Pacing, visual narrative, cutting, and experimental video composition.</div></div>
+  <div class="skill"><button class="skill-head" aria-expanded="false"><span>[+] 3D ANIMATION (BLENDER)</span><small>UNLOCKED</small></button><div class="skill-body">Keyframe animation, 3D modeling, lighting, and digital scene design in Blender and Maya.</div></div>
+  <div class="skill"><button class="skill-head" aria-expanded="false"><span>[+] PROFESSIONAL SKILLS</span><small>UNLOCKED</small></button><div class="skill-body">Applied practical training, problem solving, team collaboration, communication, adaptability, and time management.</div></div>
+</div></section>
+
+<section id="build"><div class="mc-box dev">
+  <div class="hud">SYSTEM: ACTIVE DEV LAB</div>
+  <h2 class="mc-title" style="color:var(--red)">CURRENTLY BUILDING</h2>
+  <h3 style="font-family:var(--px);font-size:1.05rem;font-weight:400;margin-bottom:12px">ANIMATION RENDER PIPELINE</h3>
+  <p class="lead" style="margin-bottom:12px">PROJECT STATUS: IN DEVELOPMENT</p>
+  <p style="margin-bottom:20px;color:#ddd">Working on custom animation render pipelines and experimenting with new visual storytelling formats in Blender.</p>
+  <button class="btn" id="open-lab" style="background:#a00;box-shadow:inset -3px -3px 0 #500,inset 3px 3px 0 #f55">[ ENTER DEVELOPMENT WORLD ]</button>
+</div></section>
+
+<section id="games"><div class="mc-box">
+  <h2 class="mc-title">GAMES I PLAY</h2>
+  <p class="lead">Favorite titles for recreation and inspiration:</p>
+  <div class="grid">
+    <div class="card game"><span class="tag">FPS / TACTICAL</span><h3>VALORANT</h3><div class="media">[ ART ]</div></div>
+    <div class="card game"><span class="tag">ACTION / OPEN WORLD</span><h3>GTA</h3><div class="media">[ ART ]</div></div>
+    <div class="card game"><span class="tag">SANDBOX / BUILD</span><h3>MINECRAFT</h3><div class="media">[ ART ]</div></div>
+    <div class="card game"><span class="tag">BATTLE ROYALE</span><h3>FORTNITE</h3><div class="media">[ ART ]</div></div>
+  </div>
+</div></section>
+
+<section id="sports"><div class="mc-box">
+  <h2 class="mc-title">REAL WORLD MODE</h2>
+  <div class="grid">
+    <div class="card sport"><span class="tag">[ FIGHT MODE ]</span><h3>BOXING</h3><p>Reflexes &amp; Precision</p></div>
+    <div class="card sport"><span class="tag">[ QUICK MATCH ]</span><h3>BADMINTON</h3><p>Agility &amp; Speed</p></div>
+    <div class="card sport"><span class="tag">[ TEAM MODE ]</span><h3>CRICKET</h3><p>Strategy &amp; Coordination</p></div>
+    <div class="card sport"><span class="tag">[ STRENGTH MODE ]</span><h3>ARM WRESTLING</h3><p>Power &amp; Focus</p></div>
+  </div>
+</div></section>
+
+<section id="quests"><div class="mc-box">
+  <h2 class="mc-title">QUEST LOG</h2>
+  <div class="quest"><small>[ QUEST ACTIVE ]</small><h3>Bachelor of Vocational Studies (B.Voc)</h3><p>St. Joseph's University, Bengaluru (2023 – Present)</p></div>
+  <div class="quest"><small>[ QUEST COMPLETED ]</small><h3>Graphic Design Program</h3><p>St. Joseph's University (completed 2024)</p></div>
+  <div class="quest"><small>[ QUEST COMPLETED ]</small><h3>Pre-University Course (Computer Science)</h3><p>St. Joseph's Pre-University College (2021 – 2023)</p></div>
+  <div class="quest"><small>[ QUEST COMPLETED ]</small><h3>SSLC</h3><p>St. Francis High School (2021)</p></div>
+</div></section>
+
+<section id="contact"><div class="mc-box" style="text-align:center">
+  <h2 class="mc-title" style="justify-content:center">START A NEW QUEST</h2>
+  <p style="font-family:var(--sub);font-size:1.6rem;color:var(--gold);margin-bottom:20px">"Got an idea? Let's build something."</p>
+  <div class="links">
+    <a class="btn" href="mailto:asparagusblaziken@gmail.com">[ EMAIL ]</a>
+    <a class="btn" href="https://www.linkedin.com/in/likhith-noel-roy-69319430b" target="_blank" rel="noopener noreferrer">[ LINKEDIN ]</a>
+  </div>
+</div></section>
+
+</main>
+
+<button id="enderman" aria-label="Enderman. Click to make it teleport." title="Don't look at it!">
+  <svg viewBox="0 0 11 33" aria-hidden="true">
+    <rect x="3" y="0" width="5" height="5" fill="#141414"/>
+    <rect id="eyeL" x="3" y="3" width="2" height="1" fill="#e6a8ff"/><rect id="eyeR" x="6" y="3" width="2" height="1" fill="#e6a8ff"/>
+    <rect x="3" y="5" width="5" height="8" fill="#1c1c1c"/>
+    <rect x="1" y="5" width="2" height="16" fill="#141414"/><rect x="8" y="5" width="2" height="16" fill="#141414"/>
+    <rect x="3" y="13" width="2" height="20" fill="#141414"/><rect x="6" y="13" width="2" height="20" fill="#141414"/>
+  </svg>
+</button>
+
+<div class="modal" id="lab" role="dialog" aria-modal="true" aria-label="Development laboratory">
+  <div class="modal-bar"><h2 class="mc-title" style="color:var(--red);margin:0">DEVELOPMENT LABORATORY</h2><button class="btn" data-close>[ EXIT LAB ]</button></div>
+  <div class="modal-inner">
+    <p class="lead">Ongoing Blender projects, wireframe renders, concept art, and gameplay footage.</p>
+    <div class="grid"><div class="media">[ CONCEPT ART ]</div><div class="media">[ 3D MODEL WIREFRAME ]</div><div class="media">[ GAMEPLAY FOOTAGE ]</div></div>
+  </div>
+</div>
+
+<div class="modal" id="lightbox" role="dialog" aria-modal="true" aria-label="Project viewer">
+  <div class="modal-bar"><h2 class="mc-title" id="lb-title" style="margin:0"></h2><button class="btn" data-close>[ CLOSE ]</button></div>
+  <div class="media" id="lb-media"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sessionOK=true;try{sessionStorage.getItem('x')}catch(e){sessionOK=false}
+
+/* Intro */
+const hero=$('#hero');
+function enter(){hero.classList.add('done');if(sessionOK)sessionStorage.setItem('seen','1')}
+if(sessionOK&&sessionStorage.getItem('seen')){hero.style.display='none'}
+else{
+  let p=0;const t=setInterval(()=>{
+    p=Math.min(100,p+Math.floor(Math.random()*25)+10);$('#bar').style.width=p+'%';
+    if(p<100){$('#status').textContent=p<35?'GENERATING TERRAIN...':p<70?'PLACING BLOCKS...':'SPAWNING ENDERMAN...';
+      const he=$('#hero-ender');he.classList.add('tp');he.style.transform='translateX('+Math.round((Math.random()-.5)*160)+'px)';setTimeout(()=>he.classList.remove('tp'),300)}
+    if(p>=100){clearInterval(t);$('#status').textContent='WORLD LOADED.';
+      setTimeout(()=>{$('#loading').style.display='none';$('#status').style.display='none';$('#spawn').style.display='flex';$('#start').focus()},400)}
+  },reduce?30:200);
+  $('#start').onclick=enter;$('#skip').onclick=enter;
+}
+
+/* Theme */
+$('#theme').onclick=e=>{const n=document.body.classList.toggle('night');e.currentTarget.textContent=n?'🌙 NIGHT':'☀ DAY';e.currentTarget.setAttribute('aria-pressed',n)};
+
+/* Skills */
+$$('.skill-head').forEach(b=>b.onclick=()=>{const s=b.parentElement,o=s.classList.toggle('open');b.setAttribute('aria-expanded',o)});
+
+/* Modals */
+let lastFocus=null;
+function openModal(m){lastFocus=document.activeElement;m.classList.add('open');m.querySelector('[data-close]').focus()}
+function closeModals(){$$('.modal.open').forEach(m=>m.classList.remove('open'));if(lastFocus)lastFocus.focus()}
+$('#open-lab').onclick=()=>openModal($('#lab'));
+$$('[data-close]').forEach(b=>b.onclick=closeModals);
+$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals()});
+$$('.work').forEach(w=>w.onclick=()=>{
+  $('#lb-title').textContent=w.dataset.title.toUpperCase();
+  const media=$('#lb-media');media.innerHTML='[ '+w.dataset.title.toUpperCase()+' ]';
+  const img=w.querySelector('img');
+  if(img&&img.complete&&img.naturalWidth){const c=new Image();c.src=img.src;c.alt=img.alt;media.appendChild(c)}
+  openModal($('#lightbox'));
+});
+
+/* Featured video: show only if the file loads */
+const vid=$('.video video');
+vid.style.display='none';
+vid.addEventListener('loadedmetadata',()=>{vid.style.display='block'});
+vid.querySelector('source').addEventListener('error',()=>vid.remove());
+vid.load();
+
+/* Background particles */
+const cv=$('#world'),ctx=cv.getContext('2d');let mx=0,my=0;
+const size=()=>{cv.width=innerWidth;cv.height=innerHeight};addEventListener('resize',size);size();
+addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*20;my=(e.clientY/innerHeight-.5)*20});
+class P{constructor(){this.reset(true)}
+  reset(init){this.x=Math.random()*cv.width;this.y=init?Math.random()*cv.height:cv.height+Math.random()*100;this.s=Math.random()*12+6;this.v=Math.random()+.3;this.a=Math.random()*.5+.2;this.c=Math.random()>.5?'#5c8e32':'#737373'}
+  step(){this.y-=this.v;if(this.y<-50)this.reset()}
+  draw(){ctx.globalAlpha=this.a;ctx.fillStyle=this.c;ctx.fillRect(this.x+mx,this.y+my,this.s,this.s)}}
+const ps=Array.from({length:35},()=>new P());
+function frame(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{if(!reduce)p.step();p.draw()});if(!reduce)requestAnimationFrame(frame)}
+frame();
+
+/* Scroll reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.1});
+$$('section').forEach(s=>io.observe(s));
+
+/* Enderman */
+const ender=$('#enderman'),eyes=[$('#eyeL'),$('#eyeR')];
+document.addEventListener('mousemove',e=>{const r=ender.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/4);const ox=Math.sign(dx)*(Math.abs(dx)>40?1:0)*.5,oy=Math.sign(dy)*(Math.abs(dy)>40?1:0)*.5;eyes[0].setAttribute('x',3+ox);eyes[1].setAttribute('x',6+ox);eyes.forEach(y=>y.setAttribute('y',3+Math.max(-.5,Math.min(.5,oy))))});
+function burst(x,y){if(reduce)return;for(let i=0;i<14;i++){const d=document.createElement('i');d.className='ender-p';d.style.left=x+'px';d.style.top=y+'px';document.body.appendChild(d);d.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${(Math.random()-.5)*80}px,${(Math.random()-.8)*100}px)`,opacity:0}],{duration:600+Math.random()*300}).onfinish=()=>d.remove()}}
+ender.onclick=()=>{const r=ender.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2);ender.classList.add('tp');const x=Math.random()*(innerWidth-r.width-20)+10;ender.style.right='auto';ender.style.left=x+'px';setTimeout(()=>{ender.classList.remove('tp');burst(x+r.width/2,r.top+r.height/2)},300)};
+
+/* Easter egg */
+let n=0;document.addEventListener('click',e=>{if(e.target.classList.contains('mc-title')&&++n===3){alert('🎉 EASTER EGG UNLOCKED: "Keep crafting your reality!"');n=0}});
+</script>
+</body>
+</html>
